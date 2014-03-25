@@ -42,6 +42,9 @@ module Quickbooks
       xml_accessor :tax_account?, :from => 'TaxAccount'
       xml_accessor :tax_code_ref, :from => 'TaxCodeRef', :as => BaseReference
 
+      # only on changes sync
+      xml_accessor :status, :from => "@status"
+      
       reference_setters :parent_ref, :currency_ref, :tax_code_ref
 
       #== Validations

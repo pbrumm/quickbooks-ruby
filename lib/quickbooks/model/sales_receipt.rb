@@ -31,6 +31,9 @@ module Quickbooks
       xml_accessor :customer_memo, :from => 'CustomerMemo'
       xml_accessor :private_note, :from => 'PrivateNote'
 
+      # only on changes sync
+      xml_accessor :status, :from => "@status"
+
       # readonly
       xml_accessor :total, :from => 'TotalAmt', :as => BigDecimal
 

@@ -6,7 +6,7 @@ describe "Quickbooks::Service::Changes" do
 
   it "make batch request with success" do
     xml = fixture("changes_response.xml")
-    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S%z')}", ["200", "OK"], xml)
+    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S')}", ["200", "OK"], xml)
     change_resp = @service.make_request(entities: ["Customer", "SalesReceipt"], since: time)
     change_resp.class.should == Quickbooks::Model::ChangesResponse
     change_resp.response.should_not == nil
@@ -18,7 +18,7 @@ describe "Quickbooks::Service::Changes" do
 
   it "should provide easier yield to get results" do
     xml = fixture("changes_response.xml")
-    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S%z')}", ["200", "OK"], xml)
+    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S')}", ["200", "OK"], xml)
     change_resp = @service.make_request(entities: ["Customer", "SalesReceipt"], since: time)
     change_resp.class.should == Quickbooks::Model::ChangesResponse
     change_resp.response.should_not == nil
@@ -35,7 +35,7 @@ describe "Quickbooks::Service::Changes" do
 
   it "make batch request with error" do
     xml = fixture("changes_response.xml")
-    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S%z')}", ["400", "OK"], xml)
+    stub_request(:get, "#{@service.url_for_resource('cdc')}?entities=Customer,SalesReceipt&changedSince=#{time.strftime('%Y-%m-%dT%H:%M:%S')}", ["400", "OK"], xml)
     
     Proc.new{
       @service.make_request(entities: ["Customer", "SalesReceipt"], since: time)

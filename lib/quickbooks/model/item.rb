@@ -49,6 +49,9 @@ module Quickbooks
       reference_setters :parent_ref, :income_account_ref, :expense_account_ref
       reference_setters :asset_account_ref, :sales_tax_code_ref, :purchase_tax_code_ref
 
+      # only on changes sync
+      xml_accessor :status, :from => "@status"
+      
       #== Validations
       validates_length_of :name, :minimum => 1
       validates_inclusion_of :type, :in => ITEM_TYPES

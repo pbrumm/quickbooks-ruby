@@ -12,7 +12,7 @@ module Quickbooks
       private
 
         def formatted_date(datetime)
-          datetime.strftime('%Y-%m-%dT%H:%M:%S%z')
+          datetime.strftime('%Y-%m-%dT%H:%M:%S')
         end
     end
   end

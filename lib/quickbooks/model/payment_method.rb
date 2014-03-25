@@ -9,6 +9,9 @@ module Quickbooks
       xml_accessor :name, :from => 'Name'
       xml_accessor :active?, :from => 'Active'
       xml_accessor :amount, :from => 'Amount', :as => BigDecimal, :to_xml => Proc.new { |val| val.to_f }
+
+      # only on changes sync
+      xml_accessor :status, :from => "@status"
     end
   end
 end

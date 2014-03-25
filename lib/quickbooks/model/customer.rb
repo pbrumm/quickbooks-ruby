@@ -52,6 +52,9 @@ module Quickbooks
       xml_accessor :taxable, :from => 'Taxable'
       xml_accessor :notes, :from => 'Notes'
 
+      # only on changes sync
+      xml_accessor :status, :from => "@status"
+      
       #== Validations
       validate :names_cannot_contain_invalid_characters
       validate :email_address_is_valid
