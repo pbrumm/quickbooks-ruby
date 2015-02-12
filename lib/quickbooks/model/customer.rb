@@ -42,15 +42,17 @@ module Quickbooks
       xml_accessor :level, :from => 'Level'
       xml_accessor :sales_term_ref, :from => 'SalesTermRef', :as => BaseReference
       xml_accessor :payment_method_ref, :from => 'PaymentMethodRef', :as => BaseReference
-      xml_accessor :balance, :from => 'Balance', :as => BigDecimal, :to_xml => Proc.new { |val| val.to_f }
+      xml_accessor :balance, :from => 'Balance', :as => BigDecimal, :to_xml => to_xml_big_decimal
       xml_accessor :open_balance_date, :from => 'OpenBalanceDate', :as => Date
-      xml_accessor :balance_with_jobs, :from => 'BalanceWithJobs', :as => BigDecimal, :to_xml => Proc.new { |val| val.to_f }
+      xml_accessor :balance_with_jobs, :from => 'BalanceWithJobs', :as => BigDecimal, :to_xml => to_xml_big_decimal
       xml_accessor :preferred_delivery_method, :from => 'PreferredDeliveryMethod'
       xml_accessor :resale_num, :from => 'ResaleNum'
       xml_accessor :suffix, :from => 'Suffix'
       xml_accessor :fully_qualified_name, :from => 'FullyQualifiedName'
       xml_accessor :taxable, :from => 'Taxable'
+      xml_accessor :default_tax_code_ref, :from => 'DefaultTaxCodeRef', :as => BaseReference
       xml_accessor :notes, :from => 'Notes'
+      xml_accessor :currency_ref, :from => 'CurrencyRef', :as => BaseReference
 
       # only on changes sync
       xml_accessor :status, :from => "@status"
@@ -59,7 +61,7 @@ module Quickbooks
       validate :names_cannot_contain_invalid_characters
       validate :email_address_is_valid
 
-      reference_setters :parent_ref, :sales_term_ref, :payment_method_ref
+      reference_setters :parent_ref, :sales_term_ref, :payment_method_ref, :default_tax_code_ref, :currency_ref
 
       def job?
         job.to_s == 'true'
