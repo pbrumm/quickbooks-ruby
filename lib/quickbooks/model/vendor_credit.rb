@@ -6,13 +6,14 @@ module Quickbooks
   module Model
     class VendorCredit < BaseModel
       include GlobalTaxCalculation
+      include HasLineItems
 
       #== Constants
       REST_RESOURCE = 'vendorcredit'
       XML_COLLECTION_NODE = "VendorCredit"
       XML_NODE = "VendorCredit"
 
-      xml_accessor :id, :from => 'Id', :as => Integer
+      xml_accessor :id, :from => 'Id'
       xml_accessor :sync_token, :from => 'SyncToken', :as => Integer
       xml_accessor :meta_data, :from => 'MetaData', :as => MetaData
       xml_accessor :doc_number, :from => 'DocNumber'

@@ -13,13 +13,14 @@ module Quickbooks
   module Model
     class Purchase < BaseModel
       include GlobalTaxCalculation
+      include HasLineItems
 
       #== Constants
       REST_RESOURCE = 'purchase'
       XML_COLLECTION_NODE = "Purchase"
       XML_NODE = "Purchase"
 
-      xml_accessor :id, :from => 'Id', :as => Integer
+      xml_accessor :id, :from => 'Id'
       xml_accessor :sync_token, :from => 'SyncToken', :as => Integer
       xml_accessor :meta_data, :from => 'MetaData', :as => MetaData
       xml_accessor :doc_number, :from => 'DocNumber'
@@ -43,6 +44,9 @@ module Quickbooks
       xml_accessor :credit?, :from => 'Credit'
 
       reference_setters
+
+      #== Validations
+      validate :line_item_size
 
       #== This adds aliases for backwards compatability to old attributes names
       alias_method :total_amount, :total

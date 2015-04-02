@@ -142,9 +142,10 @@ module Quickbooks
       #     ...
       #   </Customer>
       # </IntuitResponse>
-      def parse_singular_entity_response(model, xml)
+      def parse_singular_entity_response(model, xml, node_xpath_prefix = nil)
         xmldoc = Nokogiri(xml)
-        xmldoc.xpath("//xmlns:IntuitResponse/xmlns:#{model::XML_NODE}")[0]
+        prefix = node_xpath_prefix || model::XML_NODE
+        xmldoc.xpath("//xmlns:IntuitResponse/xmlns:#{prefix}")[0]
       end
 
       # A successful delete request returns a XML packet like:
@@ -158,28 +159,6 @@ module Quickbooks
         xmldoc.xpath("//xmlns:IntuitResponse/xmlns:#{model::XML_NODE}[@status='Deleted']").length == 1
       end
 
-      def perform_write(model, body = "", params = {}, headers = {})
-        url = url_for_resource(model::REST_RESOURCE)
-        unless headers.has_key?('Content-Type')
-          headers['Content-Type'] = 'text/xml'
-        end
-
-        response = do_http_post(url, body.strip, params, headers)
-
-        result = nil
-        if response
-          case response.code.to_i
-          when 200
-            result = Quickbooks::Model::RestResponse.from_xml(response.plain_body)
-          when 401
-            raise Quickbooks::IntuitRequestException.new("Authorization failure: token timed out?")
-          when 404
-            raise Quickbooks::IntuitRequestException.new("Resource Not Found: Check URL and try again")
-          end
-        end
-        result
-      end
-
       def do_http_post(url, body = "", params = {}, headers = {}) # throws IntuitRequestException
         url = add_query_string_to_url(url, params)
         do_http(:post, url, body, headers)
@@ -188,6 +167,23 @@ module Quickbooks
       def do_http_get(url, params = {}, headers = {}) # throws IntuitRequestException
         url = add_query_string_to_url(url, params)
         do_http(:get, url, {}, headers)
+      end
+
+      def do_http_file_upload(uploadIO, url, metadata = nil)
+        headers = {
+          'Content-Type' => 'multipart/form-data'
+        }
+        body = {}
+        body['file_content_0'] = uploadIO
+
+        if metadata
+          standalone_prefix = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+          meta_data_xml = "#{standalone_prefix}\n#{metadata.to_xml_ns.to_s}"
+          param_part = UploadIO.new(StringIO.new(meta_data_xml), "application/xml")
+          body['file_metadata_0'] = param_part
+        end
+
+        do_http(:upload, url, body, headers)
       end
 
       def do_http(method, url, body, headers) # throws IntuitRequestException
@@ -216,6 +212,8 @@ module Quickbooks
             @oauth.get(url, headers)
           when :post
             @oauth.post(url, body, headers)
+          when :upload
+            @oauth.post_with_multipart(url, body, headers)
           else
             raise "Do not know how to perform that HTTP operation"
           end
